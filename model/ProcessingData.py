@@ -1,22 +1,9 @@
-import threading
-
-import numpy as np
 import pandas as pd
-import tensorflow as tf
 import seaborn as sns
 import matplotlib.pyplot as plt
 
 from sklearn.model_selection import train_test_split
 from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.metrics import confusion_matrix
-from mlxtend.plotting import plot_confusion_matrix
-
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Embedding, LSTM, Dense, Dropout, GlobalMaxPooling1D
-from tensorflow.keras.preprocessing.text import Tokenizer
-from tensorflow.keras.preprocessing.sequence import pad_sequences
-from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 
 
 def show_datalet(data):
