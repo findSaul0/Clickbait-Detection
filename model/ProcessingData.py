@@ -7,6 +7,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 from sklearn.model_selection import train_test_split
+from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics import confusion_matrix
 from mlxtend.plotting import plot_confusion_matrix
@@ -24,6 +25,17 @@ def show_datalet(data):
     plt.savefig("../log/data_classes.png")
 
 
+def create_word_cloud(headlines):
+    text = ""
+    for word in headlines:
+        text += word
+    wordcloud = WordCloud(max_font_size=50, max_words=100, background_color="white").generate(text)
+    plt.figure()
+    plt.imshow(wordcloud, interpolation="bilinear")
+    plt.axis("off")
+    plt.savefig("../log/word_cloud.png")
+
+
 if __name__ == '__main__':
     # Carichiamo l'intero dataset
     DATASET_PATH = "../data/clickbait_data.csv"
@@ -35,6 +47,7 @@ if __name__ == '__main__':
 
     # Mostriamo la ripartizione
     show_datalet(data)
+    create_word_cloud(headlines)
 
     # dividiamo i dati di training e testing
     headlines_train, headlines_test, labels_train, labels_test = train_test_split(headlines, labels)
