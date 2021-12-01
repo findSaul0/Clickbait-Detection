@@ -1,3 +1,5 @@
+import threading
+
 import numpy as np
 import pandas as pd
 import tensorflow as tf
@@ -15,6 +17,13 @@ from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 
+
+def show_datalet(data):
+    sns.set_theme(style="darkgrid")
+    ax = sns.countplot(x="clickbait", data=data)
+    plt.savefig("../log/data_classes.png")
+
+
 if __name__ == '__main__':
     # Carichiamo l'intero dataset
     DATASET_PATH = "../data/clickbait_data.csv"
@@ -25,10 +34,7 @@ if __name__ == '__main__':
     labels = data['clickbait'].values
 
     # Mostriamo la ripartizione
-    sns.set_theme(style="darkgrid")
-    ax = sns.countplot(x="clickbait", data=data)
-    plt.show()
-
+    show_datalet(data)
 
     # dividiamo i dati di training e testing
     headlines_train, headlines_test, labels_train, labels_test = train_test_split(headlines, labels)
