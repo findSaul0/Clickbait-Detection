@@ -1,3 +1,4 @@
+import nltk
 from nltk.corpus import stopwords
 import string as s
 
@@ -53,5 +54,15 @@ def remove_spaces(lst):
     new_lst=[]
     for i in lst:
         i=i.strip()
+        new_lst.append(i)
+    return new_lst
+
+### LAMMATIZATION ###
+lemmatizer=nltk.stem.WordNetLemmatizer()
+def lemmatzation(lst):
+    #nltk.download("wordnet")
+    new_lst=[]
+    for i in lst:
+        i=lemmatizer.lemmatize(i)
         new_lst.append(i)
     return new_lst
