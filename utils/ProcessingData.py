@@ -42,8 +42,8 @@ if __name__ == '__main__':
     data, headlines, labels = load_dataset("../data/clickbait_data.csv")
 
     show_datalet(data)
-    create_word_cloud(headlines)
+    create_word_cloud(data)
 
     # dividiamo i dati di training e testing
     headlines_train, headlines_test, labels_train, labels_test = train_test_split(headlines, labels)
-    print(f"Campioni di training: {headlines_train.shape}\nCampioni di testing: {headlines_train.shape}")
+    print(f"Campioni di training: {headlines_train.shape}\nCampioni di testing: {headlines_test.shape}")
