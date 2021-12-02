@@ -6,13 +6,28 @@ from sklearn.model_selection import train_test_split
 from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
 
 
+def load_dataset(path):
+    # Carichiamo l'intero dataset
+    data = pd.read_csv(path)
+
+    # otteniamo i titoli e le etichette
+    headlines = data['headline'].values
+    labels = data['clickbait'].values
+
+    return data, headlines, labels
+
+
+# Funzione per creare un grafico a barre che mostra
+# la ripatizione in classi dei campioni
 def show_datalet(data):
     sns.set_theme(style="darkgrid")
     ax = sns.countplot(x="clickbait", data=data)
     plt.savefig("../log/data_classes.png")
 
 
-def create_word_cloud(headlines):
+# Funzione per creare una word cloud
+def create_word_cloud(data):
+    headlines = data['headline'].values
     text = ""
     for word in headlines:
         text += word
@@ -24,15 +39,8 @@ def create_word_cloud(headlines):
 
 
 if __name__ == '__main__':
-    # Carichiamo l'intero dataset
-    DATASET_PATH = "../data/clickbait_data.csv"
-    data = pd.read_csv(DATASET_PATH)
+    data, headlines, labels = load_dataset("../data/clickbait_data.csv")
 
-    # otteniamo i titoli e le etichette
-    headlines = data['headline'].values
-    labels = data['clickbait'].values
-
-    # Mostriamo la ripartizione
     show_datalet(data)
     create_word_cloud(headlines)
 
