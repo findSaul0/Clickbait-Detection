@@ -1,6 +1,7 @@
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+import utils.ProcessingData as ProcessingData
 
 pd.set_option('display.max_columns', 100)
 pd.set_option('display.max_rows', 100)
@@ -50,65 +51,55 @@ def run():
     data = pd.read_csv('../data/clickbait_data.csv', index_col=0)
 
     # Visualizziamo la frequenza delle varie classi nel dataset
-    sns.set_style('darkgrid')
-    plt.figure(figsize=(7, 5))
-    fig1 = sns.countplot(data['clickbait'])
-    plt.title('Clickbait vs Non-Clickbait')
-    plt.ylabel('# of Headline')
-    plt.xlabel('Type of Headline')
-    fig1.set(xticklabels=['Non-Clickbait', 'Clickbait'])
-    plt.tight_layout()
-    plt.savefig("../log/data_classes.png")
+    ProcessingData.show_data_classes(data)
 
     # Puliamo i dati rimuovendo le stopword e dividendo il testo in parole
-    data.headline = tokenize(data.headline)
-
+    data.headline = [word_tokenize(x) for x in data.headline]
     stopword_list = stopwords.words('english')
     data.headline = data['headline'].apply(lambda x: [item for item in x if item not in stopword_list])
 
-    # Creiamo due dataframe separate per gli articoli clickbait e non clickbai
-    data_clickbait = data[data['clickbait'] == 1]
-    data_non_clickbait = data[data['clickbait'] == 0]
+    # Creiamo due dataframe separati per gli articoli clickbait e non clickbait
+    df_clickbait = data[data['clickbait'] == 1]
+    df_non_clickbait = data[data['clickbait'] == 0]
 
-    # Creiamo una lista di parole uniche per ogni classe così da individuare le più frequenti
-    cb_word_list = list(data_clickbait['headline'])
+    # Creiamo una dizionario delle parole nei titoli clickbait
+    cb_word_list = list(df_clickbait['headline'])
     vocab_cb = set()
     for word in cb_word_list:
         vocab_cb.update(word)
-    print(len(vocab_cb))
+    print("Dimensione vocabolario Clickbait: ", len(vocab_cb))
 
-    noncb_word_list = list(data_non_clickbait['headline'])
+    # Creiamo un dizionario delle parole nei titoli non clickbait
+    noncb_word_list = list(df_non_clickbait['headline'])
     vocab_noncb = set()
     for word in noncb_word_list:
         vocab_noncb.update(word)
-    print(len(vocab_noncb))
+    print("Dimensione vocabolario Non-Clickbait: ", len(vocab_noncb))
 
+    # Calcoliamo la frequenza delle parole
     flat_cb = [item for sublist in cb_word_list for item in sublist]
     flat_noncb = [item for sublist in noncb_word_list for item in sublist]
-
     cb_freq = FreqDist(flat_cb)
     noncb_freq = FreqDist(flat_noncb)
 
-    # create counts of clickbait and non-clickbait words and values
+    # Individuiamo le 20 parole più frequenti sia nei titoli clickbait che non
     cb_bar_counts = [x[1] for x in cb_freq.most_common(20)]
     cb_bar_words = [x[0] for x in cb_freq.most_common(20)]
 
     noncb_bar_counts = [x[1] for x in noncb_freq.most_common(20)]
     noncb_bar_words = [x[0] for x in noncb_freq.most_common(20)]
 
-    plt.style.use('seaborn-talk')
+    # Creiamo dei grafici a barre
+    ProcessingData.show_most_frequency_clickbait_word(cb_bar_words, cb_bar_counts)
+    ProcessingData.show_most_frequency_nonclickbait_word(noncb_bar_words, noncb_bar_counts)
 
-    # bar plot for top 15 most common clickbait words
-    word_freq_figure1 = plt.figure(figsize=(10, 6))
-    sns.barplot(cb_bar_words, cb_bar_counts, palette='Oranges_d')
-    plt.xticks(fontsize=16)
-    plt.xticks(rotation=80)
-    plt.title('Top 20 Clickbait Headline Words')
-    plt.xlabel('Most Common Words')
-    plt.ylabel('Word Count')
-    sns.set_style('white')
-    plt.savefig('../clickbait_20_bar')
+    # Creiamo anche una nuvola di parole
+    clickbait_dictionary = dict(zip(cb_bar_words, cb_bar_counts))
+    nonclickbait_dictionary = dict(zip(noncb_bar_words, noncb_bar_counts))
+    ProcessingData.create_word_clouds(clickbait_dictionary, nonclickbait_dictionary)
+
     plt.show()
+
 
 if __name__ == '__main__':
     run()
