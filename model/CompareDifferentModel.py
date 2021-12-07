@@ -98,8 +98,10 @@ def run():
     nonclickbait_dictionary = dict(zip(noncb_bar_words, noncb_bar_counts))
     ProcessingData.create_word_clouds(clickbait_dictionary, nonclickbait_dictionary)
 
-    plt.show()
+    # Creiamo dei grafici che mostrano la distribuzione dei campioni in base alle etichette
+    ProcessingData.show_samples_distribution(data)
 
+    plt.show()
 
 if __name__ == '__main__':
     run()
