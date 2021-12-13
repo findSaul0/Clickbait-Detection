@@ -40,6 +40,8 @@ from wordcloud import WordCloud, STOPWORDS
 import string
 from matplotlib import style
 
+from scipy import sparse
+
 
 def tokenize(text):
     text = [word_tokenize(x) for x in text]
@@ -101,7 +103,42 @@ def run():
     # Creiamo dei grafici che mostrano la distribuzione dei campioni in base alle etichette
     ProcessingData.show_samples_distribution(data)
 
-    plt.show()
+    ### SEZIONE MODELLI ###
+    data = pd.read_csv('../data/clickbait_data.csv', index_col=0)
+    print(data.shape, "\n")
+    # Create stopwords list
+    stopwords_list = stopwords.words('english')
+    # definining y and features
+    features = data.drop(columns='clickbait')
+    y = data['clickbait']
+    # classes are mostly balanced
+    print(y.value_counts(), "\n")
+    # first splitting data for test/train sets
+    # ngram range -> unigrams and bigrams
+    X_train, X_test, y_train, y_test = train_test_split(features, y, random_state=20)
+    tfidf = TfidfVectorizer(stop_words=stopwords_list, ngram_range=(1, 2))
+    tfidf_text_train = tfidf.fit_transform(X_train['headline'])
+    tfidf_text_test = tfidf.transform(X_test['headline'])
+    X_train_ef = X_train.drop(columns='headline')
+    X_test_ef = X_test.drop(columns='headline')
+    # combine tf-idf vectors with the engineered features and store as sparse arrays
+    X_train = sparse.hstack([X_train_ef, tfidf_text_train]).tocsr()
+    X_test = sparse.hstack([X_test_ef, tfidf_text_test]).tocsr()
+    print(X_train.shape)
+    print(X_test.shape, "\n")
+
+    ### DUMMY CLASSIFIER ###
+    ProcessingData.dummy_classifier(X_train, y_train, X_test, y_test)
+    ### NAIVE BAYES ###
+    ProcessingData.naive_bayes(X_train, y_train, X_test, y_test)
+    ### RANDOM FOREST ###
+    # ProcessingData.random_forest(X_train,y_train,X_test,y_test)
+    ### SVM CLASSIFIER ###
+    ProcessingData.svm_classifier(X_train, y_train, X_test, y_test)
+    ### LOGISTIC REGRESSION ###
+    ProcessingData.logistic_regression(X_train, y_train, X_test, y_test)
+    ### XGBoost CLASSIFIER ###
+    ProcessingData.XGBoost(X_train, y_train, X_test, y_test)
 
 if __name__ == '__main__':
     run()
