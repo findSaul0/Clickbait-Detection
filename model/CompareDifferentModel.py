@@ -130,15 +130,15 @@ def run():
     ### DUMMY CLASSIFIER ###
     ProcessingData.dummy_classifier(X_train, y_train, X_test, y_test)
     ### NAIVE BAYES ###
-    ProcessingData.naive_bayes(X_train, y_train, X_test, y_test)
+    #ProcessingData.naive_bayes(X_train, y_train, X_test, y_test)
     ### RANDOM FOREST ###
     # ProcessingData.random_forest(X_train,y_train,X_test,y_test)
     ### SVM CLASSIFIER ###
-    ProcessingData.svm_classifier(X_train, y_train, X_test, y_test)
+    #ProcessingData.svm_classifier(X_train, y_train, X_test, y_test)
     ### LOGISTIC REGRESSION ###
-    ProcessingData.logistic_regression(X_train, y_train, X_test, y_test)
+    #ProcessingData.logistic_regression(X_train, y_train, X_test, y_test)
     ### XGBoost CLASSIFIER ###
-    ProcessingData.XGBoost(X_train, y_train, X_test, y_test)
+    #ProcessingData.XGBoost(X_train, y_train, X_test, y_test)
 
 if __name__ == '__main__':
     run()
