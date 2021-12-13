@@ -4,7 +4,19 @@ import matplotlib.pyplot as plt
 
 from sklearn.model_selection import train_test_split
 from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
+from xgboost import XGBClassifier
 
+from sklearn.metrics import confusion_matrix
+from sklearn.naive_bayes import MultinomialNB
+
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, recall_score, f1_score
+
+from sklearn.svm import LinearSVC
+
+from sklearn.dummy import DummyClassifier
+
+from sklearn.linear_model import LogisticRegression
 
 def load_dataset(path):
     # Carichiamo l'intero dataset
@@ -110,3 +122,82 @@ def show_samples_distribution(data):
     plot.set_ylabel('Num of Headlines')
     plot.legend(title=None, labels=['Non-Clickbait', 'Clickbait'], loc='upper right')
     # plt.savefig('../log/headline_words_distribution.png')
+
+# creating a function to call after each model iteration to print accuracy and recall scores for test and train
+def train_results(preds,y_train):
+     return "Training Accuracy:", accuracy_score(y_train, preds), " Training Recall:", recall_score(y_train, preds)
+
+def test_results(preds,y_test):
+    return "Testing Accuracy:", accuracy_score(y_test, preds), " Testing Recall:", recall_score(y_test, preds)
+
+def dummy_classifier(X_train,y_train,X_test,y_test):
+    #baseline model to predict majority class
+    dc_classifier = DummyClassifier(strategy='most_frequent')
+    dc_classifier.fit(X_train, y_train)
+    dc_train_preds = dc_classifier.predict(X_train)
+    dc_test_preds = dc_classifier.predict(X_test)
+    print("DUMMY CLASSIFIER")
+    print(train_results(dc_train_preds,y_train))
+    print(test_results(dc_test_preds,y_test),"\n")
+    #confusion_matrix_general(y_test,dc_test_preds,"../log/dummyclassifier_confusionmatrix")
+
+def naive_bayes(X_train,y_train,X_test,y_test):
+    nb_classifier = MultinomialNB(alpha=.05)
+    nb_classifier.fit(X_train, y_train)
+    nb_train_preds = nb_classifier.predict(X_train)
+    nb_test_preds = nb_classifier.predict(X_test)
+    print("NAIVE BAYES CLASSIFIER")
+    print(train_results(nb_train_preds,y_train))
+    print(test_results(nb_test_preds,y_test),"\n")
+    #confusion_matrix_general(y_test, nb_test_preds,"../log/naivebayes_confusionmatrix.png")
+
+def random_forest(X_train,y_train,X_test,y_test):
+    print("c")
+    rf_classifier = RandomForestClassifier(class_weight='balanced', n_estimators=900)
+    rf_classifier.fit(X_train, y_train)
+    rf_test_preds = rf_classifier.predict(X_test)
+    rf_train_preds = rf_classifier.predict(X_train)
+    print("RANDOM FOREST")
+    print(train_results(rf_train_preds,y_train))
+    print(test_results(rf_test_preds,y_test),"\n")
+    #confusion_matrix_general(y_test, rf_test_preds, "../log/randomforest_confusionmatrix.png")
+
+def svm_classifier(X_train,y_train,X_test,y_test):
+    svm_classifier = LinearSVC(class_weight='balanced', C=10, max_iter=1500)
+    svm_classifier.fit(X_train, y_train)
+    svm_test_preds = svm_classifier.predict(X_test)
+    svm_train_preds = svm_classifier.predict(X_train)
+    print("SVM CLASSIFIER")
+    print(train_results(svm_train_preds,y_train))
+    print(test_results(svm_test_preds,y_test),"\n")
+    #confusion_matrix_general(y_test, svm_test_preds, "../log/svm_confusionmatrix.png")
+
+def logistic_regression(X_train,y_train,X_test,y_test):
+    lr = LogisticRegression(C=500, class_weight='balanced', solver='liblinear', tol=0.0001)
+    lr.fit(X_train, y_train)
+    lr_train_preds = lr.predict(X_train)
+    lr_test_preds = lr.predict(X_test)
+    print("LOGISTIC REGRESSION")
+    print(train_results(lr_train_preds,y_train))
+    print(test_results(lr_test_preds,y_test))
+    #confusion_matrix_general(y_test, lr_test_preds, "../log/logisticregression_confusionmatrix.png")
+
+def XGBoost(X_train,y_train,X_test,y_test):
+    xgb_clf = XGBClassifier()
+    xgb_clf.fit(X_train, y_train)
+    xgb_test_preds = xgb_clf.predict(X_test)
+    xgb_train_preds = xgb_clf.predict(X_train)
+    print("XGBOOST CLASSIFIER")
+    print(test_results(xgb_test_preds,y_test))
+    print(train_results(xgb_train_preds,y_train))
+    confusion_matrix_general(y_test, xgb_test_preds, "../log/xgboost_confusionmatrix.png")
+
+def confusion_matrix_general(y_test, preds,path):
+    # plot confusion matrix on test set Dummy Classifier
+    sns.set()
+    cm_dc = confusion_matrix(y_test, preds)
+    sns.heatmap(cm_dc.T, square=True, annot=True, fmt='d', cbar=False, cmap="inferno", xticklabels=['non-clickbait', 'clickbait'], yticklabels=['non-clickbait', 'clickbait'])
+    plt.xlabel('true label')
+    plt.ylabel('predicted label');
+    plt.tight_layout()
+    plt.savefig(path)
