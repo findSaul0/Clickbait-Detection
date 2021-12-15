@@ -2,7 +2,6 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-from sklearn.model_selection import train_test_split
 from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
 from xgboost import XGBClassifier
 
@@ -42,7 +41,7 @@ def show_data_classes(data):
     plt.xlabel('Type of Headline')
     fig1.set(xticklabels=['Non-Clickbait', 'Clickbait'])
     plt.tight_layout()
-    # p lt.savefig("../log/data_classes.png")
+    # plt.savefig("../log/data_classes.png")
 
 
 def show_most_frequency_clickbait_word(words, counts):
@@ -55,7 +54,7 @@ def show_most_frequency_clickbait_word(words, counts):
     plt.xlabel('Most Common Words')
     plt.ylabel('Word Count')
     sns.set_style('darkgrid')
-    plt.savefig('../log/clickbait_20_bar')
+    # plt.savefig('../log/clickbait_20_bar')
 
 
 def show_most_frequency_nonclickbait_word(words, counts):
@@ -67,7 +66,7 @@ def show_most_frequency_nonclickbait_word(words, counts):
     plt.xlabel('Most Common Words')
     plt.ylabel('Word Count')
     sns.set_style('darkgrid')
-    plt.savefig('../log/nonclickbait_20_bar')
+    # plt.savefig('../log/nonclickbait_20_bar')
 
 
 # Funzione per creare una word cloud
@@ -125,100 +124,110 @@ def show_samples_distribution(data):
     plot.legend(title=None, labels=['Non-Clickbait', 'Clickbait'], loc='upper right')
     # plt.savefig('../log/headline_words_distribution.png')
 
-# creating a function to call after each model iteration to print accuracy and recall scores for test and train
-def train_results(preds,y_train):
-     return "Training Accuracy:", accuracy_score(y_train, preds), " Training Recall:", recall_score(y_train, preds)
 
-def test_results(preds,y_test):
+# creating a function to call after each model iteration to print accuracy and recall scores for test and train
+def train_results(preds, y_train):
+    return "Training Accuracy:", accuracy_score(y_train, preds), " Training Recall:", recall_score(y_train, preds)
+
+
+def test_results(preds, y_test):
     return "Testing Accuracy:", accuracy_score(y_test, preds), " Testing Recall:", recall_score(y_test, preds)
 
 
-def dummy_classifier(X_train,y_train,X_test,y_test):
-    #baseline model to predict majority class
+def dummy_classifier(X_train, y_train, X_test, y_test):
+    # baseline model to predict majority class
     start_time = time.time()
     dc_classifier = DummyClassifier(strategy='most_frequent')
     dc_classifier.fit(X_train, y_train)
     dc_train_preds = dc_classifier.predict(X_train)
     dc_test_preds = dc_classifier.predict(X_test)
     print("DUMMY CLASSIFIER")
-    print(train_results(dc_train_preds,y_train))
-    print(test_results(dc_test_preds,y_test))
+    print(train_results(dc_train_preds, y_train))
+    print(test_results(dc_test_preds, y_test))
     stop_time = time.time()
-    print("DUMMY CLASSIFIER TIME:",stop_time- start_time,"\n")
+    print("DUMMY CLASSIFIER TIME:", stop_time - start_time, "\n")
 
-    #confusion_matrix_general(y_test,dc_test_preds,"../log/dummyclassifier_confusionmatrix")
+    confusion_matrix_general(y_test, dc_test_preds, "../log/dummyclassifier_confusionmatrix")
 
-def naive_bayes(X_train,y_train,X_test,y_test):
+
+def naive_bayes(X_train, y_train, X_test, y_test):
     start_time = time.time()
     nb_classifier = MultinomialNB(alpha=.05)
     nb_classifier.fit(X_train, y_train)
     nb_train_preds = nb_classifier.predict(X_train)
     nb_test_preds = nb_classifier.predict(X_test)
     print("NAIVE BAYES CLASSIFIER")
-    print(train_results(nb_train_preds,y_train))
-    print(test_results(nb_test_preds,y_test))
+    print(train_results(nb_train_preds, y_train))
+    print(test_results(nb_test_preds, y_test))
     stop_time = time.time()
     print("NAIVE BAYES CLASSIFIER TIME:", stop_time - start_time, "\n")
-    #confusion_matrix_general(y_test, nb_test_preds,"../log/naivebayes_confusionmatrix.png")
+    confusion_matrix_general(y_test, nb_test_preds, "../log/naivebayes_confusionmatrix.png")
 
-def random_forest(X_train,y_train,X_test,y_test):
+
+def random_forest(X_train, y_train, X_test, y_test):
     start_time = time.time()
     rf_classifier = RandomForestClassifier(class_weight='balanced', n_estimators=900)
     rf_classifier.fit(X_train, y_train)
     rf_test_preds = rf_classifier.predict(X_test)
     rf_train_preds = rf_classifier.predict(X_train)
     print("RANDOM FOREST")
-    print(train_results(rf_train_preds,y_train))
-    print(test_results(rf_test_preds,y_test))
+    print(train_results(rf_train_preds, y_train))
+    print(test_results(rf_test_preds, y_test))
     stop_time = time.time()
     print("RANDOM FOREST CLASSIFIER TIME:", stop_time - start_time, "\n")
-    #confusion_matrix_general(y_test, rf_test_preds, "../log/randomforest_confusionmatrix.png")
+    confusion_matrix_general(y_test, rf_test_preds, "../log/randomforest_confusionmatrix.png")
 
-def svm_classifier(X_train,y_train,X_test,y_test):
+
+def svm_classifier(X_train, y_train, X_test, y_test):
     start_time = time.time()
     svm_classifier = LinearSVC(class_weight='balanced', C=10, max_iter=1500)
     svm_classifier.fit(X_train, y_train)
     svm_test_preds = svm_classifier.predict(X_test)
     svm_train_preds = svm_classifier.predict(X_train)
     print("SVM CLASSIFIER")
-    print(train_results(svm_train_preds,y_train))
-    print(test_results(svm_test_preds,y_test))
+    print(train_results(svm_train_preds, y_train))
+    print(test_results(svm_test_preds, y_test))
     stop_time = time.time()
     print("SVM CLASSIFIER TIME:", stop_time - start_time, "\n")
-    #confusion_matrix_general(y_test, svm_test_preds, "../log/svm_confusionmatrix.png")
+    confusion_matrix_general(y_test, svm_test_preds, "../log/svm_confusionmatrix.png")
 
-def logistic_regression(X_train,y_train,X_test,y_test):
+
+def logistic_regression(X_train, y_train, X_test, y_test):
     start_time = time.time()
     lr = LogisticRegression(C=500, class_weight='balanced', solver='liblinear', tol=0.0001)
     lr.fit(X_train, y_train)
     lr_train_preds = lr.predict(X_train)
     lr_test_preds = lr.predict(X_test)
     print("LOGISTIC REGRESSION")
-    print(train_results(lr_train_preds,y_train))
-    print(test_results(lr_test_preds,y_test))
+    print(train_results(lr_train_preds, y_train))
+    print(test_results(lr_test_preds, y_test))
     stop_time = time.time()
     print("LOGISTIC REGRESSION CLASSIFIER TIME:", stop_time - start_time, "\n")
-    #confusion_matrix_general(y_test, lr_test_preds, "../log/logisticregression_confusionmatrix.png")
+    confusion_matrix_general(y_test, lr_test_preds, "../log/logisticregression_confusionmatrix.png")
 
-def XGBoost(X_train,y_train,X_test,y_test):
+
+def XGBoost(X_train, y_train, X_test, y_test):
     start_time = time.time()
     xgb_clf = XGBClassifier()
     xgb_clf.fit(X_train, y_train)
     xgb_test_preds = xgb_clf.predict(X_test)
     xgb_train_preds = xgb_clf.predict(X_train)
     print("XGBOOST CLASSIFIER")
-    print(test_results(xgb_test_preds,y_test))
-    print(train_results(xgb_train_preds,y_train))
+    print(test_results(xgb_test_preds, y_test))
+    print(train_results(xgb_train_preds, y_train))
     stop_time = time.time()
     print("XGBOOST CLASSIFIER TIME:", stop_time - start_time, "\n")
-    #confusion_matrix_general(y_test, xgb_test_preds, "../log/xgboost_confusionmatrix.png")
+    confusion_matrix_general(y_test, xgb_test_preds, "../log/xgboost_confusionmatrix.png")
 
-def confusion_matrix_general(y_test, preds,path):
+
+def confusion_matrix_general(y_test, preds, path):
     # plot confusion matrix on test set Dummy Classifier
+    plt.figure()
     sns.set()
     cm_dc = confusion_matrix(y_test, preds)
-    sns.heatmap(cm_dc.T, square=True, annot=True, fmt='d', cbar=False, cmap="inferno", xticklabels=['non-clickbait', 'clickbait'], yticklabels=['non-clickbait', 'clickbait'])
+    sns.heatmap(cm_dc.T, square=True, annot=True, fmt='d', cbar=False, cmap="inferno",
+                xticklabels=['non-clickbait', 'clickbait'], yticklabels=['non-clickbait', 'clickbait'])
     plt.xlabel('true label')
-    plt.ylabel('predicted label');
+    plt.ylabel('predicted label')
     plt.tight_layout()
     plt.savefig(path)
