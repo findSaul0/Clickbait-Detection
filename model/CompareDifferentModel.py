@@ -1,44 +1,21 @@
-import pandas as pd
-import seaborn as sns
 import matplotlib.pyplot as plt
+import pandas as pd
+
 import utils.ProcessingData as ProcessingData
 
 pd.set_option('display.max_columns', 100)
 pd.set_option('display.max_rows', 100)
-import numpy as np
 import warnings
 
 warnings.filterwarnings('ignore')
 
-import re
-
-import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.probability import FreqDist
-from nltk.stem import PorterStemmer
 
-from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.feature_extraction.text import TfidfTransformer
-
-from sklearn.metrics import confusion_matrix
-from sklearn.naive_bayes import MultinomialNB
 
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import f1_score, recall_score
-
-from sklearn import svm
-from sklearn.svm import LinearSVC
-
-from sklearn.dummy import DummyClassifier
-
-from wordcloud import WordCloud, STOPWORDS
-
-import string
-from matplotlib import style
 
 from scipy import sparse
 
@@ -130,15 +107,18 @@ def run():
     ### DUMMY CLASSIFIER ###
     ProcessingData.dummy_classifier(X_train, y_train, X_test, y_test)
     ### NAIVE BAYES ###
-    #ProcessingData.naive_bayes(X_train, y_train, X_test, y_test)
+    ProcessingData.naive_bayes(X_train, y_train, X_test, y_test)
     ### RANDOM FOREST ###
-    # ProcessingData.random_forest(X_train,y_train,X_test,y_test)
+    ProcessingData.random_forest(X_train, y_train, X_test, y_test)
     ### SVM CLASSIFIER ###
-    #ProcessingData.svm_classifier(X_train, y_train, X_test, y_test)
+    ProcessingData.svm_classifier(X_train, y_train, X_test, y_test)
     ### LOGISTIC REGRESSION ###
-    #ProcessingData.logistic_regression(X_train, y_train, X_test, y_test)
+    ProcessingData.logistic_regression(X_train, y_train, X_test, y_test)
     ### XGBoost CLASSIFIER ###
-    #ProcessingData.XGBoost(X_train, y_train, X_test, y_test)
+    ProcessingData.XGBoost(X_train, y_train, X_test, y_test)
+
+    plt.show()
+
 
 if __name__ == '__main__':
     run()
