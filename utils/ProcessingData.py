@@ -231,3 +231,5 @@ def confusion_matrix_general(y_test, preds, path):
     plt.ylabel('predicted label')
     plt.tight_layout()
     plt.savefig(path)
+
+    return cm_dc
