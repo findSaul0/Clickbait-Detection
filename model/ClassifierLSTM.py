@@ -47,7 +47,7 @@ callbacks = [
 
 def training(model, X_train, Y_train, X_val, Y_val):
     history = model.fit(X_train, Y_train, batch_size=batch_size, validation_data=(X_val, Y_val), epochs=epochs,
-                        callbacks=callbacks)
+                        callbacks=callbacks, shuffle=True)
     model.load_weights('saved/weights.h5')
     model.save('saved/model.hdf5')
     return history
@@ -121,6 +121,10 @@ def show_training_result(history):
 
 def testing(model):
     model = load_model('saved/model.hdf5')
+    test_dataset = tf.data.Dataset.from_tensor_slices((X_test, Y_test))
+    test_dataset = test_dataset.batch(64)
+    result = model.evaluate(test_dataset)
+    print("Accuracy: ", result[1])
     preds = [round(i[0]) for i in model.predict(X_test)]
 
     cm = ProcessingData.confusion_matrix_general(Y_test, preds, "../log/model_confusionmatrix.png")
@@ -139,8 +143,8 @@ if __name__ == '__main__':
     _, headline, labels = ProcessingData.load_dataset(DATASET_PATH)
 
     # Split data in train, validation and test set
-    X_train, X_rem, Y_train, Y_rem = train_test_split(headline, labels, shuffle=True, train_size=0.8)  # train 80%
-    X_val, X_test, Y_val, Y_test = train_test_split(X_rem, Y_rem, shuffle=True,
+    X_train, X_rem, Y_train, Y_rem = train_test_split(headline, labels, train_size=0.8)  # train 80%
+    X_val, X_test, Y_val, Y_test = train_test_split(X_rem, Y_rem,
                                                     test_size=0.5)  # test and validation 10%
 
     # Print sets size
