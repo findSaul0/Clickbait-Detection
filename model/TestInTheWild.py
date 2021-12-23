@@ -39,4 +39,4 @@ if __name__ == '__main__':
         newspaper[row["newspaper"]] = newspaper[row["newspaper"]] + row["clickbait"]
 
     for key, value in newspaper.items():
-        print(f"{key}: {value}0%")
+        print(f"{key}: {value}")
