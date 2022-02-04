@@ -1,5 +1,7 @@
 import os
 
+from utils import ProcessingData
+
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 import pandas as pd
@@ -16,7 +18,7 @@ from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.utils import plot_model
 
-import utils.ProcessingData as ProcessingData
+
 
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 
@@ -133,9 +135,12 @@ def testing(model):
 
     precision = tp / (tp + fp)
     recall = tp / (tp + fn)
+    f1_score = 2 * (precision * recall) / (precision + recall)
 
-    print("Recall of the model is {:.2f}".format(recall))
-    print("Precision of the model is {:.2f}".format(precision))
+    print("Recall of the model is {:.6f}".format(recall))
+    print("Precision of the model is {:.6f}".format(precision))
+    print("F1 score: {:.6f}".format(f1_score))
+
 
 
 if __name__ == '__main__':

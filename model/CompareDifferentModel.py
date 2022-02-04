@@ -27,7 +27,7 @@ def tokenize(text):
 
 def run():
     # Carichiamo il dataset
-    data = pd.read_csv('../data/clickbait_data.csv', index_col=0)
+    data = pd.read_csv('../data/dataset_in_wild_with_prediction.csv', index_col=0)
 
     # Visualizziamo la frequenza delle varie classi nel dataset
     ProcessingData.show_data_classes(data)
@@ -79,8 +79,9 @@ def run():
 
     # Creiamo dei grafici che mostrano la distribuzione dei campioni in base alle etichette
     ProcessingData.show_samples_distribution(data)
+    plt.show()
 
-    ### SEZIONE MODELLI ###
+"""    ### SEZIONE MODELLI ###
     data = pd.read_csv('../data/clickbait_data.csv', index_col=0)
     print(data.shape, "\n")
     # Create stopwords list
@@ -117,7 +118,7 @@ def run():
     ### XGBoost CLASSIFIER ###
     ProcessingData.XGBoost(X_train, y_train, X_test, y_test)
 
-    plt.show()
+    plt.show()"""
 
 
 if __name__ == '__main__':

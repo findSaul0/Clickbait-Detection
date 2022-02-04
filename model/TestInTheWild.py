@@ -29,6 +29,7 @@ if __name__ == '__main__':
 
     # Inseriamo le predizioni come colonna nel database
     data.insert(2, "clickbait", preds)
+    data.to_csv("../data/dataset_in_wild_with_prediction.csv", index=False)
 
     # Costruiamo un dizionario dove le coppie chiave-valore sono giornali-numero_articoli_clickbait
     newspaper = {}
